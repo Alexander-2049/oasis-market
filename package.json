@@ -14,6 +14,8 @@
     "start:backend": "cd backend && npm run start:prod",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "test": "cd backend && npm run test && cd ../frontend && npm run test",
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
     "lint": "cd backend && npm run lint && cd ../frontend && npm run lint"
