@@ -87,6 +87,8 @@ model Product {
   baskets                  BasketProduct[]
   category                 Category?       @relation(fields: [categoryId], references: [id])
   categoryId               Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Price {
@@ -96,12 +98,16 @@ model Price {
   amount     Int
   product    Product?
   productId  Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Currency {
   id            String       @id
   name          TextContent? @relation(fields: [textContentId], references: [id])
   textContentId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Rating {
@@ -111,6 +117,8 @@ model Rating {
   productId   Int
   publisher   User?    @relation(fields: [publisherId], references: [id])
   publisherId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Review {
@@ -121,6 +129,8 @@ model Review {
   productId   Int
   publisher   User?    @relation(fields: [publisherId], references: [id])
   publisherId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Picture {
@@ -130,6 +140,8 @@ model Picture {
   productId   Int?
   publisher   User?    @relation(fields: [publisherId], references: [id])
   publisherId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model BasketProduct {
@@ -145,6 +157,8 @@ model Basket {
   userId   Int             @id @unique
   user     User            @relation(fields: [userId], references: [id])
   products BasketProduct[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Category {
@@ -155,6 +169,8 @@ model Category {
   subCategories    Category[]    @relation(name: "SubCategory")
   categoryName     CategoryName?
   product          Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model CategoryName {
@@ -163,10 +179,14 @@ model CategoryName {
   categoryId    Int         @unique
   name          TextContent @relation(fields: [textContentId], references: [id])
   textContentId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Language {
   id           String        @id @unique
   name         String
   textContents TextContent[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
