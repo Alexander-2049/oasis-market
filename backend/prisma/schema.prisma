@@ -13,25 +13,160 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  role     Role   @relation(fields: [roleId], references: [id])
-  roleId   Int
-}
-
-model Role {
-  id          Int          @id @default(autoincrement())
-  name        String       @unique
-  permissions Permission[]
-  users       User[]
-}
-
 enum Permission {
   DELETE_USER
   ADD_PRODUCT
   REMOVE_PRODUCT
   EDIT_PRODUCT
   VIEW_LOG
+}
+
+model TextContent {
+  id                    Int            @id @default(autoincrement())
+  textContent           String
+  language              Language?      @relation(fields: [languageId], references: [id])
+  languageId            String
+  categoryNames         CategoryName[]
+  roles                 Role[]
+  productByTitles       Product[]      @relation("title")
+  productByDescriptions Product[]      @relation("description")
+  currencies            Currency[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  deleted   Boolean   @default(false)
+  publicId  String
+  email     String    @unique
+  password  String
+  sessions  Session[]
+  role      Role?     @relation(fields: [roleId], references: [id])
+  roleId    Int?
+  products  Product[]
+  reviews   Review[]
+  ratings   Rating[]
+  pictures  Picture[]
+  basket    Basket?
+  basketId  Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  userAgent    String
+  ip           String
+  hash         String
+  user         User?    @relation(fields: [userId], references: [id])
+  userId       Int?
+  lastActivity DateTime @default(now())
+}
+
+model Role {
+  id            Int          @id @default(autoincrement())
+  permissions   Permission[]
+  users         User[]
+  name          TextContent? @relation(fields: [textContentId], references: [id])
+  textContentId Int
+}
+
+model Product {
+  id                       Int             @id @default(autoincrement())
+  publicId                 String          @unique
+  price                    Price?          @relation(fields: [priceId], references: [id])
+  priceId                  Int             @unique
+  title                    TextContent?    @relation("title", fields: [titleTextContentId], references: [id])
+  titleTextContentId       Int
+  description              TextContent?    @relation("description", fields: [descriptionTextContentId], references: [id])
+  descriptionTextContentId Int
+  pictures                 Picture[]
+  publisher                User?           @relation(fields: [userId], references: [id])
+  userId                   Int?
+  reviews                  Review[]
+  ratings                  Rating[]
+  baskets                  BasketProduct[]
+  category                 Category?       @relation(fields: [categoryId], references: [id])
+  categoryId               Int?
+}
+
+model Price {
+  id         Int      @id @default(autoincrement())
+  currency   String?
+  currencyId String
+  amount     Int
+  product    Product?
+  productId  Int?
+}
+
+model Currency {
+  id            String       @id
+  name          TextContent? @relation(fields: [textContentId], references: [id])
+  textContentId Int
+}
+
+model Rating {
+  id          Int      @id @default(autoincrement())
+  rating      Int      @db.SmallInt()
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   Int
+  publisher   User?    @relation(fields: [publisherId], references: [id])
+  publisherId Int
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  isAnonymous Boolean  @default(false)
+  content     String
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   Int
+  publisher   User?    @relation(fields: [publisherId], references: [id])
+  publisherId Int
+}
+
+model Picture {
+  id          Int      @id @default(autoincrement())
+  publicId    String   @unique
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   Int?
+  publisher   User?    @relation(fields: [publisherId], references: [id])
+  publisherId Int
+}
+
+model BasketProduct {
+  basketId  Int
+  productId Int
+  basket    Basket  @relation(fields: [basketId], references: [userId])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@id([basketId, productId])
+}
+
+model Basket {
+  userId   Int             @id @unique
+  user     User            @relation(fields: [userId], references: [id])
+  products BasketProduct[]
+}
+
+model Category {
+  id               Int           @id @default(autoincrement())
+  name             String
+  parentCategoryId Int?
+  parentCategory   Category?     @relation(name: "SubCategory", fields: [parentCategoryId], references: [id])
+  subCategories    Category[]    @relation(name: "SubCategory")
+  categoryName     CategoryName?
+  product          Product[]
+}
+
+model CategoryName {
+  id            Int         @id @default(autoincrement())
+  category      Category?   @relation(fields: [categoryId], references: [id])
+  categoryId    Int         @unique
+  name          TextContent @relation(fields: [textContentId], references: [id])
+  textContentId Int
+}
+
+model Language {
+  id           String        @id @unique
+  name         String
+  textContents TextContent[]
 }
