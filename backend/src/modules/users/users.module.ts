@@ -7,4 +7,3 @@ import { UsersRepository } from './users.repository';
   providers: [UsersRepository],
 })
 export class UsersModule {}
-

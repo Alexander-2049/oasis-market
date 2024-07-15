@@ -48,4 +48,3 @@ export class UsersRepository {
     return this.prisma.user.delete({ where });
   }
 }
-
