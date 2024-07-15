@@ -18,7 +18,9 @@
     "test": "cd backend && npm run test && cd ../frontend && npm run test",
     "lint:backend": "cd backend && npm run lint",
     "lint:frontend": "cd frontend && npm run lint",
-    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint"
+    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install"
   },
   "keywords": [],
   "author": "",
